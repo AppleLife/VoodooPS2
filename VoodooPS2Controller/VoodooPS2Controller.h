@@ -26,7 +26,8 @@
 #include <IOKit/IOInterruptEventSource.h>
 #include <IOKit/IOService.h>
 #include <IOKit/IOWorkLoop.h>
-#include <IOKit/IOSyncer.h>
+//#include <IOKit/IOSyncer.h>
+#include "IOSyncer.h"
 #include "ApplePS2Device.h"
 
 class ApplePS2KeyboardDevice;
@@ -150,7 +151,7 @@ struct KeyboardQueueElement
   queue_chain_t chain;
   UInt8         data;
 };
-#endif DEBUGGER_SUPPORT
+#endif //DEBUGGER_SUPPORT
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // ApplePS2Controller Class Declaration
@@ -174,7 +175,7 @@ public:                                // interrupt-time variables and functions
   bool doEscape(UInt8 key);
   bool dequeueKeyboardData(UInt8 * key);
   void enqueueKeyboardData(UInt8 key);
-#endif DEBUGGER_SUPPORT
+#endif //DEBUGGER_SUPPORT
 
 private:
   IOWorkLoop *             _workLoop;
@@ -207,7 +208,7 @@ private:
 
   bool                     _extendedState;
   UInt16                   _modifierState;
-#endif DEBUGGER_SUPPORT
+#endif //DEBUGGER_SUPPORT
 
   thread_call_t            _powerChangeThreadCall;
   UInt32                   _currentPowerState;

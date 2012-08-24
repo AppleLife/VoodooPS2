@@ -22,8 +22,9 @@
 
 #include <IOKit/assert.h>
 #include <IOKit/IOService.h>
-#include <IOKit/IOSyncer.h>
+//#include <IOKit/IOSyncer.h>
 #include <IOKit/IOWorkLoop.h>
+#include "IOSyncer.h"
 #include "ApplePS2KeyboardDevice.h"
 #include "ApplePS2MouseDevice.h"
 #include "VoodooPS2Controller.h"
@@ -130,7 +131,7 @@ static void interruptHandlerKeyboard(OSObject *, void *, IOService *, int)
 
     gApplePS2Controller->_interruptSourceKeyboard->interruptOccurred(0, 0, 0);
 
-#endif DEBUGGER_SUPPORT
+#endif //DEBUGGER_SUPPORT
 }
 
 // =============================================================================
@@ -186,7 +187,7 @@ bool ApplePS2Controller::init(OSDictionary * properties)
 
   _controllerLock = IOSimpleLockAlloc();
   if (!_controllerLock) return false;
-#endif DEBUGGER_SUPPORT
+#endif //DEBUGGER_SUPPORT
 
   return true;
 }
@@ -230,7 +231,7 @@ bool ApplePS2Controller::start(IOService * provider)
   for (int index = 0; index < kKeyboardQueueSize; index++)
     queue_enter(&_keyboardQueueUnused, &_keyboardQueueAlloc[index],
                 KeyboardQueueElement *, chain);
-#endif DEBUGGER_SUPPORT
+#endif //DEBUGGER_SUPPORT
 
 #if !defined(SNOW_LEO) && !defined(TIGER)
   if (provider->getProperty("newIRQLayout")) {	// turbo
@@ -452,7 +453,7 @@ void ApplePS2Controller::stop(IOService * provider)
   // Free the keyboard queue allocation space (after disabling interrupt).
   if (_keyboardQueueAlloc)
     IOFree(_keyboardQueueAlloc,kKeyboardQueueSize*sizeof(KeyboardQueueElement));
-#endif DEBUGGER_SUPPORT
+#endif //DEBUGGER_SUPPORT
 
   gApplePS2Controller = 0;
 
@@ -729,7 +730,7 @@ void ApplePS2Controller::interruptOccurred(IOInterruptEventSource *, int)
     dispatchDriverInterrupt((status&kMouseData)?kDT_Mouse:kDT_Keyboard,
                             inb(kDataPort));
   }
-#endif DEBUGGER_SUPPORT
+#endif //DEBUGGER_SUPPORT
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -926,7 +927,7 @@ UInt8 ApplePS2Controller::readDataPort(PS2DeviceType deviceType)
       unlockController(state);
       return readByte;
     }
-#endif DEBUGGER_SUPPORT
+#endif //DEBUGGER_SUPPORT
 
     //
     // Wait for the controller's output buffer to become ready.
@@ -946,7 +947,7 @@ UInt8 ApplePS2Controller::readDataPort(PS2DeviceType deviceType)
     {
 #if DEBUGGER_SUPPORT
       unlockController(state);  // (release interrupt lockout + access to queue)
-#endif DEBUGGER_SUPPORT
+#endif //DEBUGGER_SUPPORT
 
 	  if (!_suppressTimeout)
 		IOLog("%s: Timed out on %s input stream.\n", getName(),
@@ -971,7 +972,7 @@ UInt8 ApplePS2Controller::readDataPort(PS2DeviceType deviceType)
 
 #if DEBUGGER_SUPPORT
     unlockController(state);    // (release interrupt lockout + access to queue)
-#endif DEBUGGER_SUPPORT
+#endif //DEBUGGER_SUPPORT
 
 	if (_suppressTimeout)		// startup mode w/o interrupts
 		return readByte;
@@ -1048,7 +1049,7 @@ UInt8 ApplePS2Controller::readDataPort(PS2DeviceType deviceType,
       requestedStream = true;
       goto skipForwardToY;
     }
-#endif DEBUGGER_SUPPORT
+#endif //DEBUGGER_SUPPORT
 
     //
     // Wait for the controller's output buffer to become ready.
@@ -1070,7 +1071,7 @@ UInt8 ApplePS2Controller::readDataPort(PS2DeviceType deviceType,
     {
 #if DEBUGGER_SUPPORT
       unlockController(state);  // (release interrupt lockout + access to queue)
-#endif DEBUGGER_SUPPORT
+#endif //DEBUGGER_SUPPORT
 
       if (firstByteHeld)  return firstByte;
 
@@ -1107,7 +1108,7 @@ UInt8 ApplePS2Controller::readDataPort(PS2DeviceType deviceType,
 #if DEBUGGER_SUPPORT
 skipForwardToY:
     unlockController(state);    // (release interrupt lockout + access to queue)
-#endif DEBUGGER_SUPPORT
+#endif //DEBUGGER_SUPPORT
 
     if (requestedStream)
     {
@@ -1379,7 +1380,7 @@ void ApplePS2Controller::lockController(int * state)
   *state = IOSimpleLockLockDisableInterrupt(_controllerLock);
 }
 
-#endif DEBUGGER_SUPPORT
+#endif //DEBUGGER_SUPPORT
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //
